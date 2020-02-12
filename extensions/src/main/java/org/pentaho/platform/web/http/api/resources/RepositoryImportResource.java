@@ -49,6 +49,7 @@ import org.pentaho.platform.web.http.api.resources.services.FileService;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+import org.pentaho.platform.web.http.api.resources.utils.FileUtils;
 import org.pentaho.platform.web.http.api.resources.utils.SystemUtils;
 
 @Path ( "/repo/files/import" )
@@ -204,6 +205,10 @@ public class RepositoryImportResource {
       //The fileNameOverride was added because the formDataContentDispositionfile object cannot reliable
       //contain non US-ASCII characters.  See RFC283 section 2.3 for details
       String fileName = fileNameOverride != null ? fileNameOverride : fileInfo.getFileName();
+
+      if ( FileUtils.containsControlCharacters( fileName ) ) {
+        return Response.ok( "FILENAME_CONTAINS_INVALID_CHARACTERS", MediaType.TEXT_HTML ).build();
+      }
 
       RepositoryFileImportBundle.Builder bundleBuilder = new RepositoryFileImportBundle.Builder();
       bundleBuilder.input( fileUpload );

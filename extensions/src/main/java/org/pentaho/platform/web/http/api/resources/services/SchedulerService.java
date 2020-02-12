@@ -14,7 +14,7 @@
  * See the GNU Lesser General Public License for more details.
  *
  *
- * Copyright (c) 2002-2018 Hitachi Vantara. All rights reserved.
+ * Copyright (c) 2002-2020 Hitachi Vantara. All rights reserved.
  *
  */
 
@@ -58,10 +58,13 @@ import org.pentaho.platform.web.http.api.resources.SchedulerOutputPathResolver;
 import org.pentaho.platform.web.http.api.resources.SchedulerResourceUtil;
 import org.pentaho.platform.web.http.api.resources.SessionResource;
 import org.pentaho.platform.web.http.api.resources.proxies.BlockStatusProxy;
+import org.pentaho.platform.web.http.api.resources.utils.FileUtils;
+import org.pentaho.platform.web.http.messages.Messages;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -86,6 +89,13 @@ public class SchedulerService {
 
   public Job createJob( JobScheduleRequest scheduleRequest )
     throws IOException, SchedulerException, IllegalAccessException {
+
+    if ( FileUtils.containsControlCharacters( scheduleRequest.getJobName() ) ) {
+      logger.error( MessageFormat.format(
+        Messages.getInstance().getString(
+                    "SchedulerService.JOB_NAME_CONTAINS_ILLEGAL_CHARACTERS" ), scheduleRequest.getJobName() ) );
+      throw new IllegalAccessException();
+    }
 
     // Used to determine if created by a RunInBackgroundCommand
     boolean runInBackground =

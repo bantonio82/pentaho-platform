@@ -105,6 +105,10 @@ public class ImportDialog extends PromptDialogBox {
             final MessageDialogBox messageDialogBox = new MessageDialogBox( Messages.getString( "uploadUnsuccessful" ),
                 Messages.getString( "uploadFolderAccessDenied" ), true, true, true, Messages.getString( "ok" ) );
             messageDialogBox.center();
+          } else if ( result.contains( "FILENAME_CONTAINS_INVALID_CHARACTERS" ) ) {
+          final MessageDialogBox messageDialogBox = new MessageDialogBox( Messages.getString( "uploadUnsuccessful" ),
+            Messages.getString( "fileNameContainsIllegalCharacters" ), true, true, true, Messages.getString( "ok" ) );
+          messageDialogBox.center();
           } else {
             logWindow( result, Messages.getString( "importLogWindowTitle" ) );
           }
